@@ -5,3 +5,5 @@ Camera window opens and faces are detected using Haar Cascade (Frontal-Face) on 
 
 2. Detecting the faces
 Once some data is added in the dataset directory, the program automatically trains using the LBPH Face Recognition. The recognizer is trained on the selected cropped faces from the dataset. The faces in front of the web cam are used to predict labels on the trained model. Set a minimum confidence score to display labels under detected faces. The faces in front of the web cam are automatically labelled over the video window according to the predictions. A confidence score is also displayed over the frame.
+
+3. Press 'escape' to exit execution
