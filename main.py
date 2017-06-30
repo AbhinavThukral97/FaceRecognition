@@ -34,13 +34,13 @@ def readData():
 		folder_imgs = os.listdir(wd)
 		for j in folder_imgs:
 			im = cv2.imread(os.path.join(wd,j),0)
-			faces = faceCascade.detectMultiScale(im, 1.1, 5, minSize = (30,30))
+			faces = faceCascade.detectMultiScale(im, 1.1, 5, minSize = (50,50))
 			for (x,y,w,h) in faces:
 				im_arr = np.array(im[x:x+w,y:y+h],'uint8')
 				images.append(im_arr)
 				image_label.append(i)
 				#cv2.imshow("Adding", im_arr)
-				#cv2.waitKey(10)
+				#cv2.waitKey(100)
 	cv2.destroyAllWindows()
 	return images, image_label, names
 #Training on dataset
@@ -51,16 +51,22 @@ if(image_data!=[]):
 #Font for adding text on live web cam
 font = cv2.FONT_HERSHEY_DUPLEX
 
+c = 0
+
 while True:
 	ret,frame = video_capture.read()
+	if(c==1):
+		cv2.imwrite(final_path,frame)
+		c = 0
 	gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-	faces = faceCascade.detectMultiScale(gray, 1.1, 5, minSize = (40,40))
+	faces = faceCascade.detectMultiScale(gray, 1.1, 5, minSize = (50,50))
 	for (x,y,w,h) in faces:
 		cv2.rectangle(frame,(x,y),(x+w,y+h),(0,255,255),2)
 		test = gray[x:x+w,y:y+h]
 		test_img = np.array(test,'uint8')
 		if(trained==1):
-			index, confidence = recognizer.predict(test_img)
+			if(test_img.any()):
+				index, confidence = recognizer.predict(test_img)
 			if(confidence>=min_confidence):
 				#Adding label to detected face
 				cv2.putText(frame,names[index],(x,y+h+20),font,.5,(0,255,255))
@@ -84,7 +90,7 @@ while True:
 		number = len(files) + 1
 		#Get final path
 		final_path = os.path.join(working_dir, str(number)+'.png')
-		cv2.imwrite(final_path,frame)
+		c = 1
 
 video_capture.release()
 cv2.destroyAllWindows()
